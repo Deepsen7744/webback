@@ -63,14 +63,17 @@ io.on("connection", (socket) => {
       roomCreators.set(room, socket.id);
       roomParticipants.set(room, [socket.id]);
       console.log("room creator: ",socket.id);
+      console.log("room creator: email id->",email);
     } else {
       const participants = roomParticipants.get(room);
       if (participants.length >= 2) {
         console.log("Cannot join this room: ",room,socket.id);
         socket.emit("room:full", { message: "Room is full" });
         console.log("return back");
+        console.log("roomparticipants can not join",email,socket.id);
         return;
       }
+      console.log("roomparticipants ",email,socket.id);
       participants.push(socket.id);
       roomParticipants.set(room, participants);
     }
