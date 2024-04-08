@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Server } = require("socket.io");
 
 const port = process.env.PORT || 8000;
-console.log("Ryunning on port number: ",port);
+console.log("Running on port number: ",port);
 
 const io = new Server(port, {
   cors: true,
@@ -59,21 +59,22 @@ io.on("connection", (socket) => {
 
   socket.on("room:join", (data) => {
     const { email, room } = data;
+    if(email){
+    console.log("ye enter hona cha raha he ", email, room);
     if (!roomCreators.has(room)) {
       roomCreators.set(room, socket.id);
       roomParticipants.set(room, [socket.id]);
       console.log("room creator: ",socket.id);
-      console.log("room creator: email id->",email);
     } else {
       const participants = roomParticipants.get(room);
-      if (participants.length >= 2) {
+
+      if (participants.length >= 3) {
         console.log("Cannot join this room: ",room,socket.id);
         socket.emit("room:full", { message: "Room is full" });
         console.log("return back");
-        console.log("roomparticipants can not join",email,socket.id);
         return;
       }
-      console.log("roomparticipants ",email,socket.id);
+
       participants.push(socket.id);
       roomParticipants.set(room, participants);
     }
@@ -84,6 +85,7 @@ io.on("connection", (socket) => {
     io.to(room).emit("room:creator", { creatorId : roomCreators.get(room)});
     socket.join(room);
     io.to(socket.id).emit("room:join", data);
+  }
   });
 
   socket.on("user:call", ({ to, offer }) => {
