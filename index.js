@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
     } else {
       const participants = roomParticipants.get(room);
 
-      if (participants.length > 2) {
+      if (participants.length >=2) {
         console.log("Cannot join this room: ",room,socket.id);
         socket.emit("room:full", { message: "Room is full" });
         console.log("return back");
