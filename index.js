@@ -14,7 +14,7 @@ const roomParticipants = new Map();
 
 
 io.on("connection", (socket) => {
-  console.log(Socket Connected, socket.id);
+  console.log("socket Connected", socket.id);
 
 
   socket.on('code-change',({code})=>{
@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
     io.to(room).emit("room:call:end", { roomCreator, room });
     roomCreators.delete(room);
     roomParticipants.delete(room);
-    console.log(Call ended in room ${room} by initiator ${socket.id});
+    console.log(`Call ended in room ${room} by initiator ${socket.id}`);
   });
 
   socket.on("room:join", (data) => {
@@ -62,11 +62,11 @@ io.on("connection", (socket) => {
     if(email){
     console.log("ye enter hona cha raha he ", email, room);
 
-    // if(!roomCreators.has(room) && type === "e"){
-    //   socket.emit("room:full", { message: "Room is full" });
-    //   console.log("return back");
-    //   return;
-    // }
+    if(!roomCreators.has(room) && type === "e"){
+      socket.emit("room:full", { message: "Room is full" });
+      console.log("return back");
+      return;
+    }
 
     if (!roomCreators.has(room)) {
       roomCreators.set(room, socket.id);
