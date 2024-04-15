@@ -59,8 +59,15 @@ io.on("connection", (socket) => {
 
   socket.on("room:join", (data) => {
     const { email, room, type } = data;
-    if(email && type === "s"){
+    if(email){
     console.log("ye enter hona cha raha he ", email, room);
+
+    if(!roomCreators.has(room) && type === "e"){
+      socket.emit("room:full", { message: "Room is full" });
+      console.log("return back");
+      return;
+    }
+
     if (!roomCreators.has(room)) {
       roomCreators.set(room, socket.id);
       roomParticipants.set(room, [socket.id]);
@@ -85,10 +92,6 @@ io.on("connection", (socket) => {
     io.to(room).emit("room:creator", { creatorId : roomCreators.get(room)});
     socket.join(room);
     io.to(socket.id).emit("room:join", data);
-  } else {
-    socket.emit("room:full", { message: "Room is full" });
-    console.log("return back");
-    return;
   }
   });
 
