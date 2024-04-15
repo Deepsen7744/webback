@@ -62,11 +62,11 @@ io.on("connection", (socket) => {
     if(email){
     console.log("ye enter hona cha raha he ", email, room);
 
-    if(!roomCreators.has(room) && type === "e"){
-      socket.emit("room:full", { message: "Room is full" });
-      console.log("return back");
-      return;
-    }
+    // if(!roomCreators.has(room) && type === "e"){
+    //   socket.emit("room:full", { message: "Room is full" });
+    //   console.log("return back");
+    //   return;
+    // }
 
     if (!roomCreators.has(room)) {
       roomCreators.set(room, socket.id);
