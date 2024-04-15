@@ -14,7 +14,7 @@ const roomParticipants = new Map();
 
 
 io.on("connection", (socket) => {
-  console.log(`Socket Connected`, socket.id);
+  console.log(Socket Connected, socket.id);
 
 
   socket.on('code-change',({code})=>{
@@ -54,12 +54,12 @@ io.on("connection", (socket) => {
     io.to(room).emit("room:call:end", { roomCreator, room });
     roomCreators.delete(room);
     roomParticipants.delete(room);
-    console.log(`Call ended in room ${room} by initiator ${socket.id}`);
+    console.log(Call ended in room ${room} by initiator ${socket.id});
   });
 
   socket.on("room:join", (data) => {
-    const { email, room } = data;
-    if(email){
+    const { email, room, type } = data;
+    if(email && type === "s"){
     console.log("ye enter hona cha raha he ", email, room);
     if (!roomCreators.has(room)) {
       roomCreators.set(room, socket.id);
@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
     } else {
       const participants = roomParticipants.get(room);
 
-      if (participants.length >=2) {
+      if (participants.length >= 3) {
         console.log("Cannot join this room: ",room,socket.id);
         socket.emit("room:full", { message: "Room is full" });
         console.log("return back");
@@ -85,6 +85,10 @@ io.on("connection", (socket) => {
     io.to(room).emit("room:creator", { creatorId : roomCreators.get(room)});
     socket.join(room);
     io.to(socket.id).emit("room:join", data);
+  } else {
+    socket.emit("room:full", { message: "Room is full" });
+    console.log("return back");
+    return;
   }
   });
 
